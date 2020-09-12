@@ -40,15 +40,14 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log('submit!');
         //  验证成功，提交表单到后台
           login(this.form.username, this.form.password).then(response => {
             const resp = response.data
             if (resp.flag === true) {
               // 验证成功，通过tocker去获取用户信息
-              getUserInfo(resp.data.token).then(resp => {
+              getUserInfo(resp.data.token).then(response => {
                 // 获取到的用户信息
-                const respUser = resp.data
+                const respUser = response.data
                 if (respUser.flag === true) {
                   console.log('userInfo', respUser.data)
                   // 1.保存token、用户信息
