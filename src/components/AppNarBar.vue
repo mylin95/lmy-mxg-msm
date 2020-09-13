@@ -4,7 +4,7 @@
 <!--  :router="true": 开启路由模式  -->
     <el-menu
       :router="true"
-      default-active="/home"
+      :default-active="$route.path"
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
