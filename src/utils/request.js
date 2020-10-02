@@ -1,10 +1,13 @@
 import axios from "axios";
+import Vue from "vue";
 
 // lmy: db.json放置在与index.html的打包同目录下，此请求能找到
 // axios.get('/db.json').then(response => {
 // 	const data = response.data
 // 	console.log('test axios', data)
 // })
+
+let vm = new Vue();
 
 // 封装自定义axios
 const request = axios.create({
@@ -39,6 +42,11 @@ request.interceptors.response.use(
   error => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
+    // alert(error.config.url + ' ' + error.message)
+    vm.$message({
+      type: "error",
+      message: error.config.url + ' ' + error.message
+    })
     return Promise.reject(error);
   }
 );
