@@ -36,7 +36,7 @@ export default {
   },
   deleteById(id) {
     return request({
-      url: `/member/${id}`,
+      url: `/supplier/${id}`,
       method: 'delete'
     })
   }
