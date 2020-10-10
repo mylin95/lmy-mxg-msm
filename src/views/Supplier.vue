@@ -5,26 +5,33 @@
       <el-form-item prop="name">
         <el-input v-model="searchMap.name" placeholder="供应商名称" style="width: 200px"></el-input>
       </el-form-item>
-      <el-form-item prop="linkman">
+      <el-form-item prop="linkman" v-if="!isDialog">
         <el-input v-model="searchMap.linkman" placeholder="联系人" style="width: 200px"></el-input>
       </el-form-item>
-      <el-form-item prop="mobile">
+      <el-form-item prop="mobile" v-if="!isDialog">
         <el-input v-model="searchMap.mobile" placeholder="联系电话" style="width: 200px"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="fetchData">查询</el-button>
-        <el-button type="primary" @click="handleAdd">新增</el-button>
-        <el-button @click="resetForm('searchForm')">重置</el-button>
+        <el-button type="primary" @click="handleAdd" v-if="!isDialog">新增</el-button>
+        <el-button @click="resetForm('searchForm')" v-if="!isDialog">重置</el-button>
       </el-form-item>
     </el-form>
     <!--  表格主体  -->
-    <el-table :data="list" border style="width: 100%" height="400">
+    <!--  highlight-current-row 激活单选行
+          @current-change 当点击某一行后，会出发这个事件，从而调用对应的事件 handleRowCurrentChange
+          handleRowCurrentChange函数会接受两个参数： currentRow, oldCurrentRow
+          注：highlight-current-row属性 和 @current-change事件，没有关联关系（与梦学谷日、官方文档内容相悖）
+    -->
+    <el-table :highlightCurrentRow="isDialog"
+              @current-change="handleRowCurrentChange"
+              ref="singleTable" :data="list" border style="width: 100%" height="400">
       <el-table-column type="index" label="序号" width="60"></el-table-column>
       <el-table-column prop="name" label="供应商名称"></el-table-column>
       <el-table-column prop="linkman" label="联系人"></el-table-column>
-      <el-table-column prop="mobile" label="联系电话"></el-table-column>
-      <el-table-column prop="remark" label="备注"></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column prop="mobile" label="联系电话" v-if="!isDialog"></el-table-column>
+      <el-table-column prop="remark" label="备注" v-if="!isDialog"></el-table-column>
+      <el-table-column label="操作" width="150" v-if="!isDialog">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.row.id)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
@@ -38,12 +45,12 @@
       :current-page="currentPage"
       :page-sizes="[10, 20, 30, 40]"
       :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
+      :layout="!isDialog ? 'total, sizes, prev, pager, next, jumper' : 'prev, pager, next'"
       :total="total">
     </el-pagination>
 
     <!--  弹窗-新增按钮  -->
-    <el-dialog title="供应商编辑" :visible.sync="dialogFormVisible" width="500px">
+    <el-dialog title="供应商编辑" :visible.sync="dialogFormVisible" v-if="!isDialog" width="500px">
       <el-form ref="pojoForm" :model="pojo" :rules="rules" label-width="100px" label-position="right"
                style="width: 400px">
         <el-form-item label="供应商名称" prop="name">
@@ -73,6 +80,9 @@ import supplierApi from "../api/supplier";
 import memberApi from "../api/member";
 
 export default {
+  props: {
+    isDialog: Boolean
+  },
   data() {
     return {
       list: [],
@@ -221,14 +231,15 @@ export default {
         })
       }).catch(() => {
       })
+    },
+    handleRowCurrentChange(currentRow, oldCurrentRow) {
+      console.log('sun-currentRow', currentRow)
+      console.log('sun-oldCurrentRow', oldCurrentRow)
+      this.$emit('supplier-option', currentRow)
     }
   }
 }
 </script>
 
 <style scoped>
-  .el-pagination {
-    margin-top: 15px;
-    float: right;
-  }
 </style>
