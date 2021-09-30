@@ -4,6 +4,15 @@ module.exports = {
 		host: "127.0.0.1", // 主机名, 127.0.0.1, 真机 0.0.0.0
 		https: false, // 协议
 		open: false, // 启动服务是，是否自动打开浏览器访问
+		proxy: {
+			['/']: {
+				target: 'http://127.0.0.1:8888',
+				changeOrigin: true, // 开启代理服务器
+				pathRewrite: {
+					["^/"]: "/"
+				}
+			}
+		}
 	},
 	
 	lintOnSave: false, // 关闭格式校验
